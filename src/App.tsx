@@ -74,7 +74,7 @@ function App() {
       <div className="flex items-center">
         <div className="mb-2 p-2 border rounded-xl w-fit pr-4">
           <h1 className="font-bold text-3xl">Привет!</h1>
-          <h2 className="text-muted-foreground">Твои задачи на сегодня:</h2>
+          <h2 className="text-muted-foreground">Задачи на сегодня:</h2>
         </div>
         <button
           className={cn(
