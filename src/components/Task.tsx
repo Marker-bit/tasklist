@@ -30,7 +30,6 @@ export default function Task({
           (done
             ? "bg-green-200 border-green-300 dark:bg-green-900 dark:border-green-800"
             : "bg-red-100 border-red-200 dark:bg-red-900 dark:border-red-800"),
-        !editing && "cursor-pointer"
       )}
       onClick={() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -96,7 +95,6 @@ export default function Task({
             className="ml-auto flex items-center gap-1"
           >
             <button
-              className="cursor-pointer"
               onClick={() => {
                 if (!editingTitle) {
                   inputRef.current?.focus();
@@ -109,7 +107,7 @@ export default function Task({
             >
               <Edit2 className="size-5" />
             </button>
-            <button className="cursor-pointer" onClick={deleteTask}>
+            <button onClick={deleteTask}>
               <Trash className="size-5" />
             </button>
           </motion.div>
