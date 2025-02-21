@@ -94,20 +94,22 @@ function App() {
     id: string,
     title: string,
     done: boolean,
-    lastReset: Date
+    lastReset: Date,
+    order: number
   ) {
-    await db?.put("tasks", { id, title, done, lastReset });
-    setTasks((tasks) => tasks.map((t) => (t.id === id ? { ...t, title } : t)));
+    await db?.put("tasks", { id, title, done, lastReset, order });
+    setTasks((tasks) => tasks.map((t) => (t.id === id ? { ...t, title, order } : t)));
   }
 
   async function setDone(
     id: string,
     title: string,
     done: boolean,
-    lastReset: Date
+    lastReset: Date,
+    order: number
   ) {
-    await db?.put("tasks", { id, title, done, lastReset });
-    setTasks((tasks) => tasks.map((t) => (t.id === id ? { ...t, done } : t)));
+    await db?.put("tasks", { id, title, done, lastReset, order });
+    setTasks((tasks) => tasks.map((t) => (t.id === id ? { ...t, done, order } : t)));
   }
 
   async function updateOrder(tasks: { order: number }[]) {
@@ -171,16 +173,16 @@ function App() {
         </div>
         <div className="flex flex-col gap-1 items-stretch">
           <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
-            {tasks.map(({ id, title, done, lastReset: lr }) => (
+            {tasks.map(({ id, title, done, lastReset: lr, order: or }) => (
               <Task
                 key={id}
                 id={id}
                 title={title}
                 done={done}
                 editing={editing}
-                updateTitle={(t) => updateTitle(id, t, done, lr)}
+                updateTitle={(t) => updateTitle(id, t, done, lr, or)}
                 deleteTask={() => deleteTask(id)}
-                setDone={(d) => setDone(id, title, d, lr)}
+                setDone={(d) => setDone(id, title, d, lr, or)}
               />
             ))}
           </SortableContext>
