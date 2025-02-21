@@ -1,5 +1,5 @@
 import { IDBPDatabase, IDBPTransaction } from "idb";
-import {isSameDay} from "date-fns"
+import { isSameDay } from "date-fns";
 
 const versions = [
   { version: 1, upgrader: () => {} },
@@ -21,6 +21,22 @@ const versions = [
       const lastReset = new Date();
       for (const task of tasks) {
         db.add("tasks", { ...task, lastReset });
+      }
+    },
+  },
+  {
+    version: 4,
+    upgrader: async (
+      db: IDBPDatabase,
+      trx: IDBPTransaction<unknown, string, "versionchange">
+    ) => {
+      const store = trx.objectStore("tasks");
+      const tasks = await store.getAll();
+      await store.clear();
+      let i = 0;
+      for (const task of tasks) {
+        db.add("tasks", { ...task, order: i });
+        i++;
       }
     },
   },
@@ -52,7 +68,7 @@ export async function resetChecks(db: IDBPDatabase) {
   for (const task of tasks) {
     if (task.done && !isSameDay(lastReset, task.lastReset)) {
       task.done = false;
-      console.log(task.done)
+      console.log(task.done);
     }
     db.add("tasks", { ...task, lastReset });
   }

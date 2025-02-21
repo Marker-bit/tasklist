@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
-import { Check, Edit2, Trash } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { Check, Edit2, GripVertical, Trash } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState } from "react";
+import { CSS } from "@dnd-kit/utilities";
 
 export default function Task({
   title,
@@ -10,7 +12,9 @@ export default function Task({
   editing,
   updateTitle,
   deleteTask,
+  id,
 }: {
+  id: string;
   title: string;
   done: boolean;
   setDone: (done: boolean) => void;
@@ -18,6 +22,13 @@ export default function Task({
   updateTitle: (title: string) => void;
   deleteTask: () => void;
 }) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
   const [editingTitle, setEditingTitle] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,12 +40,15 @@ export default function Task({
         !editing &&
           (done
             ? "bg-green-200 border-green-300 dark:bg-green-900 dark:border-green-800"
-            : "bg-red-100 border-red-200 dark:bg-red-900 dark:border-red-800"),
+            : "bg-red-100 border-red-200 dark:bg-red-900 dark:border-red-800")
       )}
       onClick={() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         !editing && setDone(!done);
       }}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
     >
       <AnimatePresence mode="popLayout" initial={false}>
         {done ? (
@@ -94,6 +108,9 @@ export default function Task({
             exit={{ x: 100, opacity: 0 }}
             className="ml-auto flex items-center gap-1"
           >
+            <button {...listeners}>
+              <GripVertical className="w-6 h-6" />
+            </button>
             <button
               onClick={() => {
                 if (!editingTitle) {
