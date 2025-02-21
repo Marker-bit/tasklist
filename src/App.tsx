@@ -1,3 +1,19 @@
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { IDBPDatabase, openDB } from "idb";
 import { Edit2, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -7,23 +23,9 @@ import AddTask from "./components/AddTask";
 import Task from "./components/Task";
 import upgradeDb, { resetChecks } from "./lib/upgrade-db";
 import { cn } from "./lib/utils";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
 
 function App() {
+  // const [activeId, setActiveId] = useState<string | null>(null);
   const [tasks, setTasks] = useState<
     {
       id: string;
@@ -35,7 +37,8 @@ function App() {
   >([]);
   const [db, setDb] = useState<IDBPDatabase>();
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -126,8 +129,9 @@ function App() {
       const newIndex = t.indexOf(t.find((b) => b.id === over.id)!);
       t = arrayMove(t, oldIndex, newIndex);
       setTasks(t);
-      updateOrder(t)
+      updateOrder(t);
     }
+    // setActiveId(null);
   }
 
   const [editing, setEditing] = useState(false);
@@ -180,6 +184,20 @@ function App() {
               />
             ))}
           </SortableContext>
+          {/* <DragOverlay>
+            {activeId ? (
+              <Task
+                key={activeId}
+                id={activeId}
+                title={tasks.find((t) => t.id === activeId)!.title}
+                done={tasks.find((t) => t.id === activeId)!.done}
+                editing={editing}
+                updateTitle={() => {}}
+                deleteTask={() => {}}
+                setDone={() => {}}
+              />
+            ) : null}
+          </DragOverlay> */}
           <AnimatePresence mode="popLayout">
             {editing && (
               <motion.div
