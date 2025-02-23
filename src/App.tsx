@@ -6,7 +6,7 @@ import {
   MouseSensor,
   TouchSensor,
   useSensor,
-  useSensors
+  useSensors,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -20,9 +20,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import AddTask from "./components/AddTask";
+import { ModeToggle } from "./components/ModeToggle";
 import Task from "./components/Task";
+import { Toggle } from "./components/ui/toggle";
 import upgradeDb, { resetChecks } from "./lib/upgrade-db";
-import { cn } from "./lib/utils";
 
 function App() {
   // const [activeId, setActiveId] = useState<string | null>(null);
@@ -98,7 +99,9 @@ function App() {
     order: number
   ) {
     await db?.put("tasks", { id, title, done, lastReset, order });
-    setTasks((tasks) => tasks.map((t) => (t.id === id ? { ...t, title, order } : t)));
+    setTasks((tasks) =>
+      tasks.map((t) => (t.id === id ? { ...t, title, order } : t))
+    );
   }
 
   async function setDone(
@@ -109,7 +112,9 @@ function App() {
     order: number
   ) {
     await db?.put("tasks", { id, title, done, lastReset, order });
-    setTasks((tasks) => tasks.map((t) => (t.id === id ? { ...t, done, order } : t)));
+    setTasks((tasks) =>
+      tasks.map((t) => (t.id === id ? { ...t, done, order } : t))
+    );
   }
 
   async function updateOrder(tasks: { order: number }[]) {
@@ -158,18 +163,12 @@ function App() {
             <h1 className="font-bold text-3xl">Привет!</h1>
             <h2 className="text-muted-foreground">Задачи на сегодня:</h2>
           </div>
-          <button
-            className={cn(
-              "ml-auto p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-950 transition",
-              editing &&
-                "bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800"
-            )}
-            onClick={() => setEditing((editing) => !editing)}
-          >
-            <Edit2
-              className={cn("size-5 transition", editing && "text-blue-500")}
-            />
-          </button>
+          <div className="ml-auto flex gap-2 items-center">
+            <ModeToggle />
+            <Toggle pressed={editing} onPressedChange={setEditing} aria-label="Переключить режим редактирования">
+              <Edit2 className="h-4 w-4" />
+            </Toggle>
+          </div>
         </div>
         <div className="flex flex-col gap-1 items-stretch">
           <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
