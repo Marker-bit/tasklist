@@ -17,13 +17,16 @@ import {
 import { IDBPDatabase, openDB } from "idb";
 import { Edit2, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import AddTask from "./components/AddTask";
 import { ModeToggle } from "./components/ModeToggle";
 import Task from "./components/Task";
 import { Toggle } from "./components/ui/toggle";
 import upgradeDb, { resetChecks } from "./lib/upgrade-db";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale";
+import { numWord } from "./lib/utils";
 
 function App() {
   // const [activeId, setActiveId] = useState<string | null>(null);
@@ -43,6 +46,11 @@ function App() {
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
+  );
+
+  const tasksNotDone = useMemo(
+    () => tasks.filter((t) => !t.done).length,
+    [tasks]
   );
 
   useEffect(() => {
@@ -161,11 +169,27 @@ function App() {
         <div className="flex items-center">
           <div className="mb-2 p-2 border rounded-xl w-fit pr-4">
             <h1 className="font-bold text-3xl">Привет!</h1>
-            <h2 className="text-muted-foreground">Задачи на сегодня:</h2>
+            <h2 className="text-muted-foreground">
+              {format(new Date(), "do MMMM yyyy 'года'", { locale: ru })},{" "}
+              {tasksNotDone === 0
+                ? "все задачи выполнены!"
+                : tasksNotDone +
+                  " " +
+                  numWord(
+                    tasksNotDone,
+                    "задача не выполнена",
+                    "задачи не выполнены",
+                    "задач не выполнено"
+                  )}
+            </h2>
           </div>
           <div className="ml-auto flex gap-2 items-center">
             <ModeToggle />
-            <Toggle pressed={editing} onPressedChange={setEditing} aria-label="Переключить режим редактирования">
+            <Toggle
+              pressed={editing}
+              onPressedChange={setEditing}
+              aria-label="Переключить режим редактирования"
+            >
               <Edit2 className="h-4 w-4" />
             </Toggle>
           </div>
