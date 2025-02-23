@@ -14,6 +14,8 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale";
 import { IDBPDatabase, openDB } from "idb";
 import { Edit2, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -24,9 +26,8 @@ import { ModeToggle } from "./components/ModeToggle";
 import Task from "./components/Task";
 import { Toggle } from "./components/ui/toggle";
 import upgradeDb, { resetChecks } from "./lib/upgrade-db";
-import { format } from "date-fns";
-import { ru } from "date-fns/locale";
 import { numWord } from "./lib/utils";
+import confetti from "canvas-confetti";
 
 function App() {
   // const [activeId, setActiveId] = useState<string | null>(null);
@@ -119,10 +120,54 @@ function App() {
     lastReset: Date,
     order: number
   ) {
-    await db?.put("tasks", { id, title, done, lastReset, order });
+    if (!done) {
+      setTasks((tasks) =>
+        tasks.map((t) => (t.id === id ? { ...t, done, order } : t))
+      );
+      await db?.put("tasks", { id, title, done, lastReset, order });
+      return;
+    }
     setTasks((tasks) =>
       tasks.map((t) => (t.id === id ? { ...t, done, order } : t))
     );
+    let showConfetti = true;
+    for (const task of tasks) {
+      if (!task.done && task.id !== id) {
+        showConfetti = false;
+        break;
+      }
+    }
+    if (showConfetti) {
+      const defaults = {
+        spread: 360,
+        ticks: 50,
+        gravity: 0,
+        decay: 0.94,
+        startVelocity: 30,
+        colors: ["FFE400", "FFBD00", "E89400", "FFCA6C", "FDFFB8"],
+      };
+
+      function shoot() {
+        confetti({
+          ...defaults,
+          particleCount: 40,
+          scalar: 1.2,
+          shapes: ["star"],
+        });
+
+        confetti({
+          ...defaults,
+          particleCount: 10,
+          scalar: 0.75,
+          shapes: ["circle"],
+        });
+      }
+
+      setTimeout(shoot, 0);
+      setTimeout(shoot, 100);
+      setTimeout(shoot, 200);
+    }
+    await db?.put("tasks", { id, title, done, lastReset, order });
   }
 
   async function updateOrder(tasks: { order: number }[]) {
