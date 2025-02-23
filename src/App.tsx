@@ -170,9 +170,11 @@ function App() {
           <div className="mb-2 p-2 border rounded-xl w-fit pr-4">
             <h1 className="font-bold text-3xl">Привет!</h1>
             <h2 className="text-muted-foreground">
-              {format(new Date(), "do MMMM yyyy 'года'", { locale: ru })},{" "}
+              {format(new Date(), "d MMMM yyyy 'года'", { locale: ru })}
+            </h2>
+            <h3 className="text-muted-foreground text-sm">
               {tasksNotDone === 0
-                ? "все задачи выполнены!"
+                ? "Все задачи выполнены!"
                 : tasksNotDone +
                   " " +
                   numWord(
@@ -181,7 +183,7 @@ function App() {
                     "задачи не выполнены",
                     "задач не выполнено"
                   )}
-            </h2>
+            </h3>
           </div>
           <div className="ml-auto flex gap-2 items-center">
             <ModeToggle />
