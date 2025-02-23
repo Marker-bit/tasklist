@@ -4,6 +4,7 @@ import { Check, Edit2, GripVertical, Trash } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
+import EditDrawer from "./EditDrawer";
 
 export default function Task({
   title,
@@ -32,6 +33,7 @@ export default function Task({
   const [editingTitle, setEditingTitle] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [editOpen, setEditOpen] = useState(false);
 
   return (
     <button
@@ -100,6 +102,8 @@ export default function Task({
       )}
       {!editingTitle && title}
 
+      <EditDrawer open={editOpen} setOpen={setEditOpen} />
+
       <AnimatePresence>
         {editing && (
           <motion.div
@@ -113,13 +117,14 @@ export default function Task({
             </button>
             <button
               onClick={() => {
-                if (!editingTitle) {
-                  inputRef.current?.focus();
-                  setNewTitle(title);
-                } else {
-                  inputRef.current?.blur();
-                }
-                setEditingTitle((a) => !a);
+                // if (!editingTitle) {
+                //   inputRef.current?.focus();
+                //   setNewTitle(title);
+                // } else {
+                //   inputRef.current?.blur();
+                // }
+                // setEditingTitle((a) => !a);
+                setEditOpen(true);
               }}
             >
               <Edit2 className="size-5" />
