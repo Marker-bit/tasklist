@@ -11,7 +11,7 @@ import ThemeRadio from "./ThemeRadio";
 import { Button } from "./ui/button";
 import SyncSettings from "./SyncSettings";
 
-export default function AdditionalButtons() {
+export default function AdditionalButtons({tasks, setTasks}: {tasks: {id: string, title: string, done: boolean, lastReset: Date, order: number}[], setTasks: React.Dispatch<React.SetStateAction<{id: string, title: string, done: boolean, lastReset: Date, order: number}[]>>}) {
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -29,7 +29,7 @@ export default function AdditionalButtons() {
         </DrawerHeader>
         <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <ThemeRadio />
-          <SyncSettings />
+          <SyncSettings tasks={tasks} setTasks={setTasks} />
         </div>
       </DrawerContent>
     </Drawer>

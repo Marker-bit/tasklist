@@ -1,12 +1,15 @@
-import { Loader2, RotateCw, SendIcon } from "lucide-react";
+import {
+  Loader2,
+  SendIcon
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import CodeInputDrawer from "./CodeInputDrawer";
 import LogoutButton from "./LogoutButton";
-import { Button } from "./ui/button";
+import SyncButton from "./SyncButton";
 import { Input } from "./ui/input";
 
-export default function SyncSettings() {
+export default function SyncSettings({tasks, setTasks}: {tasks: {id: string, title: string, done: boolean, lastReset: Date, order: number}[], setTasks: React.Dispatch<React.SetStateAction<{id: string, title: string, done: boolean, lastReset: Date, order: number}[]>>}) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [codeOpen, setCodeOpen] = useState(false);
@@ -103,19 +106,26 @@ export default function SyncSettings() {
             синхронизации.
           </p>
         </form>
+      ) : state === null ? (
+        <div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Отправка запроса на сервер...
+          </p>
+        </div>
       ) : (
         <div className="flex flex-col gap-2 items-start">
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Вы вошли в аккаунт под {state}
           </p>
-          <Button variant="outline">
+          <SyncButton tasks={tasks} setTasks={setTasks} />
+          {/* <Button variant="outline">
             Синхронизировать
             <RotateCw
               className="-me-1 opacity-60"
               size={16}
               aria-hidden="true"
             />
-          </Button>
+          </Button> */}
           <LogoutButton />
         </div>
       )}

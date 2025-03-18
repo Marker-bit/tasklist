@@ -234,7 +234,7 @@ function App() {
             </h3>
           </div>
           <div className="ml-auto flex gap-2 items-center">
-            <AdditionalButtons />
+            <AdditionalButtons tasks={tasks} setTasks={setTasks} />
             <Toggle
               pressed={editing}
               onPressedChange={setEditing}
