@@ -8,13 +8,14 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import confetti from "canvas-confetti";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { IDBPDatabase, openDB } from "idb";
@@ -22,13 +23,13 @@ import { Edit2, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import AdditionalButtons from "./components/AdditionalButtons";
 import AddTask from "./components/AddTask";
-import { ModeToggle } from "./components/ModeToggle";
 import Task from "./components/Task";
 import { Toggle } from "./components/ui/toggle";
 import upgradeDb, { resetChecks } from "./lib/upgrade-db";
 import { numWord } from "./lib/utils";
-import confetti from "canvas-confetti";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
   // const [activeId, setActiveId] = useState<string | null>(null);
@@ -233,7 +234,7 @@ function App() {
             </h3>
           </div>
           <div className="ml-auto flex gap-2 items-center">
-            <ModeToggle />
+            <AdditionalButtons />
             <Toggle
               pressed={editing}
               onPressedChange={setEditing}
@@ -286,6 +287,7 @@ function App() {
           </AnimatePresence>
         </div>
       </div>
+      <Toaster />
     </DndContext>
   );
 }
