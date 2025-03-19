@@ -8,8 +8,9 @@ import CodeInputDrawer from "./CodeInputDrawer";
 import LogoutButton from "./LogoutButton";
 import SyncButton from "./SyncButton";
 import { Input } from "./ui/input";
+import { IDBPDatabase } from "idb";
 
-export default function SyncSettings({tasks, setTasks}: {tasks: {id: string, title: string, done: boolean, lastReset: Date, order: number}[], setTasks: React.Dispatch<React.SetStateAction<{id: string, title: string, done: boolean, lastReset: Date, order: number}[]>>}) {
+export default function SyncSettings({tasks, setTasks, db}: {tasks: {id: string, title: string, done: boolean, lastReset: Date, order: number}[], setTasks: React.Dispatch<React.SetStateAction<{id: string, title: string, done: boolean, lastReset: Date, order: number}[]>>, db: IDBPDatabase}) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [codeOpen, setCodeOpen] = useState(false);
@@ -117,7 +118,7 @@ export default function SyncSettings({tasks, setTasks}: {tasks: {id: string, tit
           <p className="text-sm text-muted-foreground">
             Вы вошли в аккаунт под {state}
           </p>
-          <SyncButton tasks={tasks} setTasks={setTasks} />
+          <SyncButton db={db} tasks={tasks} setTasks={setTasks} />
           {/* <Button variant="outline">
             Синхронизировать
             <RotateCw

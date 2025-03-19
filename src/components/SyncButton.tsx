@@ -2,10 +2,12 @@ import { CloudDownloadIcon, CloudUploadIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
+import { IDBPDatabase } from "idb";
 
 export default function SyncButton({
   tasks,
   setTasks,
+  db,
 }: {
   tasks: {
     id: string;
@@ -25,6 +27,7 @@ export default function SyncButton({
       }[]
     >
   >;
+  db: IDBPDatabase;
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -80,8 +83,32 @@ export default function SyncButton({
           description: "Попробуйте позже",
         });
       } else {
-        setTasks(data.tasks);
-        toast.success("Задачи успешно получены");
+        setTasks(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          data.tasks.map((task: any) => ({
+            ...task,
+            done: false,
+            lastReset: new Date(),
+          }))
+        );
+        toast.promise(
+          async () => {
+            await db?.clear("tasks");
+            for (const task of data.tasks) {
+              await db?.add("tasks", {
+                ...task,
+                done: false,
+                lastReset: new Date(),
+              });
+            }
+          },
+          {
+            loading: "Задачи получаются и сохраняются...",
+            success: "Задачи успешно получены и сохранены",
+            error: "Произошла ошибка при получении и сохранении задач",
+          }
+        );
+        // toast.success("Задачи успешно получены");
       }
     }
     setLoading(false);
